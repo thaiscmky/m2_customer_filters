@@ -1,0 +1,20 @@
+<!--
+/**
+ * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
+ * @package     ThaisCmky_CustomerFilters
+ * @copyright   Copyright (c) 2021 Thais Cailet (https://thaiscmky.github.io/)
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+        <referenceBlock name="page.main.title">
+            <action method="setPageTitle">
+                <argument translate="true" name="title" xsi:type="string">Product Search By Filter</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template" name="customer_filters" template="ThaisCmky_CustomerFilters::customer_filters.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

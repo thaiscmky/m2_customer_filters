@@ -1,0 +1,19 @@
+<!--
+/**
+ * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
+ * @package     ThaisCmky_CustomerFilters
+ * @copyright   Copyright (c) 2021 Thais Cailet (https://thaiscmky.github.io/)
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customer_account_navigation">
+            <block class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-navigation-custom" before="customer-account-navigation-orders-link">
+                <arguments>
+                    <argument name="path" xsi:type="string">customerfilters/customer/index</argument>
+                    <argument name="label" xsi:type="string" translate="true">Product Search</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>
