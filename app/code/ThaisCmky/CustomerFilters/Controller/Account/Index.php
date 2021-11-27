@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace ThaisCmky\CustomerFilters\Controller\Account;
 use Magento\Framework\App\Action\HttpGetActionInterface;
@@ -30,7 +30,6 @@ class Index implements HttpGetActionInterface, HttpPostActionInterface
 
     public function execute()
     {
-        die('hi');
         return $this->pageFactory->create();
     }
 }
