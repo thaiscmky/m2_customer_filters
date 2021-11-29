@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
+ * @package     ThaisCmky_CustomerFilters
+ * @copyright   Copyright (c) 2021 Thais Cailet (https://thaiscmky.github.io/)
+ */
 namespace ThaisCmky\CustomerFilters\Controller\Account;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface as HttpPostActionInterface;
@@ -30,6 +34,7 @@ class Index implements HttpGetActionInterface, HttpPostActionInterface
 
     public function execute()
     {
+        //die('trying');
         return $this->pageFactory->create();
     }
 }

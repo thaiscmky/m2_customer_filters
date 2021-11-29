@@ -10,7 +10,7 @@
         <referenceBlock name="customer_account_navigation">
             <block class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-navigation-custom" before="customer-account-navigation-orders-link">
                 <arguments>
-                    <argument name="path" xsi:type="string">customerfilters/customer/index</argument>
+                    <argument name="path" xsi:type="string">customerfilters/account/index</argument>
                     <argument name="label" xsi:type="string" translate="true">Product Search</argument>
                 </arguments>
             </block>

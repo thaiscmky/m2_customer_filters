@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 /**
  * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
@@ -15,6 +16,7 @@
         </referenceBlock>
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template" name="customer_filters" template="ThaisCmky_CustomerFilters::customer_filters.phtml"/>
+            <uiComponent name="tc_csfilters_prodlist"/>
         </referenceContainer>
     </body>
 </page>
