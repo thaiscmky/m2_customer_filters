@@ -11,11 +11,11 @@
     <body>
         <referenceBlock name="page.main.title">
             <action method="setPageTitle">
-                <argument translate="true" name="title" xsi:type="string">Product Search By Filter</argument>
+                <argument translate="true" name="title" xsi:type="string">Advanced Product Search</argument>
             </action>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Magento\Framework\View\Element\Template" name="customer_filters" template="ThaisCmky_CustomerFilters::customer_filters.phtml"/>
+            <block class="ThaisCmky\CustomerFilters\Block\Form" name="customer_filters" template="ThaisCmky_CustomerFilters::customer_filters.phtml"/>
             <uiComponent name="tc_csfilters_prodlist"/>
         </referenceContainer>
     </body>
