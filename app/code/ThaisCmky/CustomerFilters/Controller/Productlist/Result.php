@@ -3,6 +3,7 @@ namespace ThaisCmky\CustomerFilters\Controller\Productlist;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Image;
+use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Store\Model\StoreManager;
@@ -19,7 +20,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
     protected $productRepository;
     protected $imageHelper;
     protected $storeManager;
-    protected $stockQty;
+    protected $stockInfo;
     protected $searchCriteriaBuilder;
     protected $searchFilter;
     protected $filterGroup;
@@ -33,7 +34,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param FilterBuilder $searchFilter
      * @param FilterGroupBuilder $filterGroup
-     * @param GetSalableQuantityDataBySku $stockQty
+     * @param GetSalableQuantityDataBySku $stockInfo
      * @param RequestHttp $request
      * @param ResponseHttp $response
      */
@@ -44,7 +45,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         SearchCriteriaBuilder $searchCriteriaBuilder,
         FilterBuilder $searchFilter,
         FilterGroupBuilder $filterGroup,
-        GetSalableQuantityDataBySku $stockQty,
+        GetSalableQuantityDataBySku $stockInfo,
         RequestHttp $request,
         ResponseHttp $response
     )
@@ -55,63 +56,68 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         $this->productRepository = $productRepository;
         $this->imageHelper = $imageHelper;
         $this->storeManager = $storeManager;
-        $this->stockQty = $stockQty;
+        $this->stockInfo = $stockInfo;
         $this->request = $request;
         $this->response = $response;
     }
 
     public function execute()
     {
-        $minPrice = $this->request->get('minPrice');
-        $maxPrice = $this->request->get('maxPrice');
         $offset = $this->request->get('offset');
-
-        $minfilter = $this->searchFilter
-            ->setField(ProductInterface::PRICE)
-            ->setConditionType('gte')
-            ->setValue($minPrice)
-            ->create();
-
-        $maxfilter = $this->searchFilter
-            ->setField(ProductInterface::PRICE)
-            ->setConditionType('lte')
-            ->setValue($maxPrice)
-            ->create();
-
-        $filter_group = $this->filterGroup
-            ->addFilter($minfilter)
-            ->addFilter($maxfilter)
-            ->create();
-
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->setFilterGroups([$filter_group])
-            ->setPageSize(10)
-            ->setCurrentPage(intval($offset) == 0 ? 0 : $offset + 1)
-            ->create();
-
-        $result = $this->productRepository->getList($searchCriteria);
+        $result = $this->productRepository->getList($this->setSearchCriteria(
+            [$this->request->get('minPrice'), $this->request->get('maxPrice')]
+            , 10
+            , $offset
+            , $this->request->get('offset')
+        ));
         $products =  $result->getItems();
 
         $productList = [
             'offset' => $result->getSearchCriteria()->getCurrentPage() ?? 0,
             'items' => $result->getTotalCount(),
+            'limit' => $result->getSearchCriteria()->getPageSize(),
             'products' => []
         ];
 
         foreach ($products as $product) {
-            $stock_info = $this->stockQty->execute($product->getSku());
             array_push($productList['products'], [
                 'entity_id' => $product->getId(),
                 'name' => $product->getName(),
                 'sku' => $product->getSku(),
-                'qty' => array_reduce($stock_info, fn($qty, $stock) => $qty + $stock['qty'], 0),
+                'qty' => $this->getProductQuantity($product),
                 'price' => $product->getPrice(),
-                'src' => $this->imageHelper->init($product, 'product_listing_thumbnail')->getUrl(),
+                'src' => $this->imageHelper->init($product, 'product_thumbnail_image')->getUrl(),
                 'href' => $product->getProductUrl()
             ]);
         }
         return $this->response->representJson(json_encode($productList));
     }
 
+    protected function getProductQuantity($product)
+    {
+        return array_reduce($this->stockInfo->execute($product->getSku()), fn($qty, $stock) => $qty + $stock['qty'], 0);
+    }
+
+    protected function setPriceRange($min, $max)
+    {
+        $this->searchCriteriaBuilder
+            ->addFilter(ProductInterface::PRICE, $max, 'lteq')
+            ->addFilter(ProductInterface::PRICE, $min, 'gteq')
+            ->addFilter(ProductInterface::TYPE_ID, ['configurable', 'grouped'], 'nin');
+    }
+
+    protected function setSearchCriteria($range, $limit, $offset)
+    {
+        $this->setPriceRange($range[0], $range[1]);
+        return $this->searchCriteriaBuilder
+            ->setPageSize($limit)
+            ->setCurrentPage(intval($offset) == 0 ? 0 : $offset + 1)
+            ->create();
+    }
+
+    protected function setSortOrder()
+    {
+        //TODO order by price asc or desc
+    }
 
 }
