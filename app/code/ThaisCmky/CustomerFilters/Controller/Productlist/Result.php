@@ -86,7 +86,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
                 'sku' => $product->getSku(),
                 'qty' => $this->getProductQuantity($product),
                 'price' => $product->getPrice(),
-                'src' => $this->imageHelper->init($product, 'product_thumbnail_image')->getUrl(),
+                'src' => $this->imageHelper->init($product, 'product_small_image')->getUrl(),
                 'href' => $product->getProductUrl()
             ]);
         }
