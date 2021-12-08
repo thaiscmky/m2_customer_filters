@@ -130,6 +130,7 @@ SECURITY.md
 app/*
 !app/code/
 auth.json.sample
+auth.json
 bin/
 composer.json
 composer.lock
@@ -144,3 +145,5 @@ pub/
 setup/
 var/
 vendor/
+MAMP-PRO-Logo.png
+index.php
