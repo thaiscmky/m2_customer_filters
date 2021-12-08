@@ -15,8 +15,37 @@
             </action>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="ThaisCmky\CustomerFilters\Block\Form" name="customer_filters" template="ThaisCmky_CustomerFilters::customer_filters.phtml"/>
-            <uiComponent name="tc_csfilters_prodlist"/>
+            <block class="ThaisCmky\CustomerFilters\Block\ProductSearch" name="customer_filters" template="ThaisCmky_CustomerFilters::customer_filters.phtml" cacheable="false">
+                <arguments>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="product-search" xsi:type="array">
+                                <item name="component" xsi:type="string">ThaisCmky_CustomerFilters/js/view/product-search</item>
+                                <item name="config" xsi:type="array">
+                                    <item name="template" xsi:type="string">ThaisCmky_CustomerFilters/product-search</item>
+                                </item>
+                                <item name="children" xsi:type="array">
+                                    <item name="search-form" xsi:type="array">
+                                        <item name="component" xsi:type="string">ThaisCmky_CustomerFilters/js/view/product-search/form</item>
+                                        <item name="displayArea" xsi:type="string">productSearch</item>
+                                        <item name="config" xsi:type="array">
+                                            <item name="template" xsi:type="string">ThaisCmky_CustomerFilters/product-search/form</item>
+                                            <item name="maxPriceMultiplier" xsi:type="number">5</item>
+                                        </item>
+                                    </item>
+                                    <item name="product-list" xsi:type="array">
+                                        <item name="component" xsi:type="string">ThaisCmky_CustomerFilters/js/view/product-search/list</item>
+                                        <item name="displayArea" xsi:type="string">productResults</item>
+                                        <item name="config" xsi:type="array">
+                                            <item name="template" xsi:type="string">ThaisCmky_CustomerFilters/product-search/list</item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </block>
         </referenceContainer>
     </body>
 </page>

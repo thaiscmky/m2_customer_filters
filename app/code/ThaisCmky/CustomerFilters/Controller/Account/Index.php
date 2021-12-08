@@ -34,7 +34,6 @@ class Index implements HttpGetActionInterface, HttpPostActionInterface
 
     public function execute()
     {
-        //die('trying');
         return $this->pageFactory->create();
     }
 }
