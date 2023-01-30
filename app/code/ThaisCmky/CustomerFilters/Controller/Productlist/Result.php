@@ -80,7 +80,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         ];
 
         foreach ($products as $product) {
-            array_push($productList['products'], [
+            $productList['products'][] = [
                 'entity_id' => $product->getId(),
                 'name' => $product->getName(),
                 'sku' => $product->getSku(),
@@ -88,14 +88,16 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
                 'price' => $product->getPrice(),
                 'src' => $this->imageHelper->init($product, 'product_small_image')->getUrl(),
                 'href' => $product->getProductUrl()
-            ]);
+            ];
         }
         return $this->response->representJson(json_encode($productList));
     }
 
     protected function getProductQuantity($product)
     {
-        return array_reduce($this->stockInfo->execute($product->getSku()), fn($qty, $stock) => $qty + $stock['qty'], 0);
+        return array_reduce($this->stockInfo->execute($product->getSku()), function ($qty, $stock) {
+            return $qty + $stock['qty'];
+        }, 0);
     }
 
     protected function setPriceRange($min, $max)
