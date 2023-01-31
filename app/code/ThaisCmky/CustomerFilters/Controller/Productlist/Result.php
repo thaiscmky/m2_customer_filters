@@ -95,9 +95,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
 
     protected function getProductQuantity($product)
     {
-        return array_reduce($this->stockInfo->execute($product->getSku()), function ($qty, $stock) {
-            return $qty + $stock['qty'];
-        }, 0);
+        return array_reduce($this->stockInfo->execute($product->getSku()), fn($qty, $stock) => $qty + $stock['qty'], 0);
     }
 
     protected function setPriceRange($min, $max)
