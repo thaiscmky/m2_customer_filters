@@ -83,10 +83,10 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         $offset = $this->request->get('offset');
         $minPrice = $this->request->get('minPrice');
         $maxPrice = $this->request->get('maxPrice');
-        if(empty($error = $this->checkInvalid($minPrice, $maxPrice))){
+        if(!empty($error = $this->checkInvalid($minPrice, $maxPrice))) {
             return $this->response->setStatusCode(400)->representJson(
                 json_encode([
-                    'error' => $error.join(', ')
+                    'error' => implode(', ', $error)
                 ])
             );
         }
