@@ -64,5 +64,5 @@ See the [GNU General Public License](https://www.gnu.org/licenses/gpl.html) for 
 To run form validation test (unit test) for this module, use the following command:
 
 ```bash
-./vendor/bin/phpunit -c /c/xampp/htdocs/magento2/dev/tests/unit/phpunit.xml.dist app/code/ThaisCmky/CustomerFilters/Test/Unit/ControllerResult.php
+./vendor/bin/phpunit -c ./dev/tests/unit/phpunit.xml.dist app/code/ThaisCmky/CustomerFilters/Test/Unit/ControllerResult.php
 ```
