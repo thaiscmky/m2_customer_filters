@@ -1,18 +1,42 @@
-<table>
+<!--
+/**
+ * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
+ * @package     ThaisCmky_CustomerFilters
+ * @copyright   Copyright (c) 2023 Thais Cailet (https://thaiscmky.github.io/)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
+-->
+<table class="table">
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Product Name</th>
-        <th>Product Price</th>
-        <th>Preview</th>
+        <th><!-- ko i18n: 'SKU' --><!-- /ko --></th>
+        <th><!-- ko i18n: 'Name' --><!-- /ko --></th>
+        <th><!-- ko i18n: 'Price' --><!-- /ko --></th>
+        <th><!-- ko i18n: 'Qty' --><!-- /ko --></th>
+        <th><!-- ko i18n: 'Preview' --><!-- /ko --></th>
+        <th><!-- ko i18n: 'Details' --><!-- /ko --></th>
     </tr>
     </thead>
     <tbody data-bind="foreach: $parent.productList">
     <tr>
-        <td data-bind="text: entity_id"></td>
-        <td data-bind="text: name"></td>
-        <td data-bind="text: price"></td>
-        <td><img data-bind="attr: {src: src}" width="120" height="150" alt="Product Image"></td>
+        <td data-bind="i18n: sku"></td>
+        <td data-bind="i18n: name"></td>
+        <td><span data-bind="text: currency"></span><span data-bind="text: price"></span></td>
+        <td data-bind="text: qty"></td>
+        <td><img data-bind="attr: {src: src, alt: $t('Product Image')}" width="120" height="150"></td>
+        <td><a data-bind="attr: {href: href}" target="_blank"><!-- ko i18n: 'View Product' --><!-- /ko --></a></td>
     </tr>
     </tbody>
 </table>

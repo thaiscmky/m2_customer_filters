@@ -1,4 +1,24 @@
-<form data-bind="submit: $parent.getProducts.bind($parent)" id="form-validate">
+<!--
+/**
+ * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
+ * @package     ThaisCmky_CustomerFilters
+ * @copyright   Copyright (c) 2023 Thais Cailet (https://thaiscmky.github.io/)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
+ -->
+<form data-bind="submit: $parent.getProducts.bind($parent)" id="form-price-search" autocomplete="off">
     <fieldset class="fieldset">
         <div class="field price">
             <label class="label" for="price">
@@ -10,12 +30,15 @@
                         <div class="control">
                             <div class="addon">
                                 <input name="price[from]"
-                                       placeholder="0.00"
-                                       data-bind="textInput: $parent.minPrice"
+                                       data-bind="textInput: $parent.minPrice, attr: {placeholder: $t('minimum price')}"
                                        id="price"
                                        class="input-text" type="number"
                                        maxlength="125"
-                                       data-validate="{number:true, 'validate-not-negative-number':true, 'less-than-equals-to':'#price_to'}"
+                                       data-validate='{
+                                           "required-number":true,
+                                           "validate-not-negative-number":true,
+                                           "less-than-equals-to": "#price_to"
+                                       }'
                                 />
                                 <span class="addbefore" data-bind="text: $parent.currency" style="border:none"></span>
                             </div>
@@ -25,12 +48,16 @@
                         <div class="control">
                             <div class="addon">
                                 <input name="price[to]"
-                                       data-bind="textInput: $parent.maxPrice"
-                                       placeholder="500.00"
+                                       data-bind="textInput: $parent.maxPrice, attr: {placeholder: $t('maximum price')}"
                                        id="price_to"
                                        class="input-text" type="number"
                                        maxlength="125"
-                                       data-validate="{number:true, 'validate-not-negative-number':true, 'greater-than-equals-to':'#price'}"
+                                       data-validate='{
+                                           "required-number":true,
+                                           "validate-not-negative-number":true,
+                                           "greater-than-equals-to":"#price",
+                                           "validate-five-times-or-less": "#price"
+                                       }'
                                 />
                                 <span class="addbefore" data-bind="text: $parent.currency" style="border:none"></span>
                                 <span class="addafter" data-bind="text: $parent.currencyCode" style="border:none"></span>

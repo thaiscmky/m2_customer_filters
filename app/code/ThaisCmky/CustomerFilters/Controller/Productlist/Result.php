@@ -1,9 +1,26 @@
 <?php
+/**
+ * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
+ * @package     ThaisCmky_CustomerFilters
+ * @copyright   Copyright (c) 2023 Thais Cailet (https://thaiscmky.github.io/)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 namespace ThaisCmky\CustomerFilters\Controller\Productlist;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Image;
-use Magento\Catalog\Model\Product\Type;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Store\Model\StoreManager;
@@ -64,8 +81,18 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
     public function execute()
     {
         $offset = $this->request->get('offset');
+        $minPrice = $this->request->get('minPrice');
+        $maxPrice = $this->request->get('maxPrice');
+        if(empty($error = $this->checkInvalid($minPrice, $maxPrice))){
+            return $this->response->setStatusCode(400)->representJson(
+                json_encode([
+                    'error' => $error.join(', ')
+                ])
+            );
+        }
+
         $result = $this->productRepository->getList($this->setSearchCriteria(
-            [$this->request->get('minPrice'), $this->request->get('maxPrice')]
+            [$minPrice, $maxPrice]
             , 10
             , $offset
             , $this->request->get('offset')
@@ -85,7 +112,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
                 'name' => $product->getName(),
                 'sku' => $product->getSku(),
                 'qty' => $this->getProductQuantity($product),
-                'price' => $product->getPrice(),
+                'price' => number_format($product->getPrice(), 2, '.', ''),
                 'src' => $this->imageHelper->init($product, 'product_small_image')->getUrl(),
                 'href' => $product->getProductUrl()
             ];
@@ -113,6 +140,23 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
             ->setPageSize($limit)
             ->setCurrentPage(intval($offset) == 0 ? 0 : $offset + 1)
             ->create();
+    }
+
+    public function checkInvalid($min, $max) {
+        $err = [];
+        if(empty($min))
+            $err[] = __('A minimum price is required');
+        if(empty($max))
+            $err[] = __('A maximum price is required');
+        if(!is_numeric($max) || !is_numeric($min))
+            $err[] = __('Only numbers are accepted');
+        if($min < 0 || $max < 0)
+            $err[] = __('Only positive numbers are accepted');
+        if( $min > $max )
+            $err[] = __('Minimum price cannot exceed maximum price');
+        if( $max > ($min > 0 ? $min : 1) * 5)
+            $err[] = __('Maximum price cannot exceed five times the minimum price');
+        return $err;
     }
 
     protected function setSortOrder()

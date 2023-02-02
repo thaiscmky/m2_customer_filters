@@ -1,4 +1,3 @@
-<!--
 /**
  * @author      Thais Cailet <thaiscmky@users.noreply.github.com>
  * @package     ThaisCmky_CustomerFilters
@@ -16,17 +15,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- -->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <body>
-        <referenceBlock name="customer_account_navigation">
-            <block class="Magento\Framework\View\Element\Html\Link\Current" name="customer-account-navigation-custom" before="customer-account-navigation-orders-link">
-                <arguments>
-                    <argument name="path" xsi:type="string">customerfilters/account/index</argument>
-                    <argument name="label" xsi:type="string" translate="true">Product Search</argument>
-                </arguments>
-            </block>
-        </referenceBlock>
-    </body>
-</page>
+ **/
+define([
+    'jquery',
+    'mage/translate'
+], function($, $t) {
+    'use strict';
+
+    return function(targetWidget) {
+        $.validator.addMethod(
+            'validate-five-times-or-less',
+            function(value, el, compare_el) {
+                console.log(value, $(compare_el).val(), parseFloat($(compare_el).val().trim()), (minPrice > 0 ? minPrice : 1) * 5 <= parseFloat(value));
+                var minPrice = parseFloat($(compare_el).val().trim());
+                return parseFloat(value) <= (minPrice > 0 ? minPrice : 1) * 5;
+            },
+            $.mage.__('Please enter an amount lower than five times the minimum price')
+        )
+        return targetWidget;
+    }
+});
