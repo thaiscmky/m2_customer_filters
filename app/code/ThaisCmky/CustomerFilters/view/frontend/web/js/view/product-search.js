@@ -39,19 +39,22 @@ define([
             return this;
         },
         getProducts: function () {
-            const self = this;
+            var self = this;
             if(!this.validate()) return;
-            const query = new URLSearchParams({
+            var query = new URLSearchParams({
                 minPrice: self.minPrice(),
                 maxPrice: self.maxPrice(),
-                offset: self.currentPage()
+                offset: self.currentPage(),
+                sortOrder: $('#sort_by_price').val()
             });
-            const serviceUrl = urlBuilder.build('customerfilters/productlist/result/?' + query , '');
+            var serviceUrl = urlBuilder.build('customerfilters/productlist/result/?' + query , '');
+            $('#search_status').text($t('Loading search results, please wait') + '...');
             return storage.post(
                 serviceUrl,
                 {}
             ).done(
                 function (response) {
+                    $('#search_status').text('');
                     self.productList(response.products);
                     self.currentPage(response.offset);
                     self.totalItems(response.items);

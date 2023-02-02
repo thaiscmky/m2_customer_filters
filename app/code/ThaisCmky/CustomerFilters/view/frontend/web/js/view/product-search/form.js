@@ -19,11 +19,12 @@
 define([
     'jquery',
     'uiComponent',
+    'ko',
     'mage/translate'
-    ], function ($, Component, $t) {
+    ], function ($, Component, ko, $t) {
         'use strict';
-        console.log('this is the form js');
         return Component.extend({
+            sortOptions: ko.observableArray(['ASC', 'DESC']),
             initialize: function () {
                 this._super();
             }

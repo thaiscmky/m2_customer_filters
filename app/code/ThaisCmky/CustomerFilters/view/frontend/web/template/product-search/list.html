@@ -33,7 +33,10 @@
     <tr>
         <td data-bind="i18n: sku"></td>
         <td data-bind="i18n: name"></td>
-        <td><span data-bind="text: currency"></span><span data-bind="text: price"></span></td>
+        <td>
+            <span class="addbefore" data-bind="text: $parent.currency"></span>
+            <span data-bind="text: price"></span>
+        </td>
         <td data-bind="text: qty"></td>
         <td><img data-bind="attr: {src: src, alt: $t('Product Image')}" width="120" height="150"></td>
         <td><a data-bind="attr: {href: href}" target="_blank"><!-- ko i18n: 'View Product' --><!-- /ko --></a></td>

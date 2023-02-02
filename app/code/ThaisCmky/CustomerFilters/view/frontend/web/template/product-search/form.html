@@ -67,12 +67,28 @@
                 </div>
             </div>
         </div>
+        <div class="field sort">
+            <label class="label" for="sort_by_price">
+                <span data-bind="i18n: 'Sort by Price'"></span>
+            </label>
+            <div class="field no-label">
+                <div class="control">
+                    <div class="addon">
+                        <select data-bind="
+                            options: sortOptions,
+                            optionsCaption: 'Select...',
+                            value: selectedChoice"
+                            name="sort_by_price"
+                            id="sort_by_price"
+                        ></select>
+                    </div>
+                </div>
+            </div>
+        </div>
     </fieldset>
     <div class="actions-toolbar">
         <div class="primary">
-            <button type="submit" class="action search primary">
-                <span data-bind="i18n: 'Search'"></span>
-            </button>
+            <button type="submit" class="action search primary" data-bind="i18n: 'Search'"></button>
         </div>
     </div>
 </form>
