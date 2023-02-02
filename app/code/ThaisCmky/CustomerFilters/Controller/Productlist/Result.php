@@ -132,7 +132,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
 
     protected function setPriceRange($min, $max, $sort = 'ASC')
     {
-        $sortOrder = $this->sortOrder->setField('price')->setDirection($sort)->create();
+        $sortOrder = $this->sortOrder->setField(ProductInterface::PRICE)->setDirection($sort)->create();
         $this->searchCriteriaBuilder
             ->addFilter(ProductInterface::PRICE, $max, 'lteq')
             ->addFilter(ProductInterface::PRICE, $min, 'gteq')

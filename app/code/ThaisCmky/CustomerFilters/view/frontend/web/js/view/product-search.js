@@ -25,7 +25,6 @@ define([
     'mage/translate',
     'mage/validation'
 ], function ($, Component, ko, storage, urlBuilder, $t) {
-    console.log('this is the product search call');
     return Component.extend({
         currency: window.storeCurrencySymbol,
         currencyCode: window.storeCurrency,

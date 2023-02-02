@@ -26,7 +26,6 @@ define([
         $.validator.addMethod(
             'validate-five-times-or-less',
             function(value, el, compare_el) {
-                console.log(value, $(compare_el).val(), parseFloat($(compare_el).val().trim()), (minPrice > 0 ? minPrice : 1) * 5 <= parseFloat(value));
                 var minPrice = parseFloat($(compare_el).val().trim());
                 return parseFloat(value) <= (minPrice > 0 ? minPrice : 1) * 5;
             },

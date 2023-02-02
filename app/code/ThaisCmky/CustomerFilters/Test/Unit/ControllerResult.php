@@ -26,9 +26,10 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Store\Model\StoreManager;
 use PHPUnit\Framework\TestCase;
-use ThaisCmky\CustomerFilters\Controller\Productlist\Result as Result;
+use ThaisCmky\CustomerFilters\Controller\Productlist\Result;
 
 class ControllerResult extends TestCase {
 
@@ -44,6 +45,7 @@ class ControllerResult extends TestCase {
     protected $searchCriteriaBuilderMock;
     protected $searchFilterMock;
     protected $filterGroupMock;
+    protected $sortOrderMock;
     protected $requestMock;
     protected $responseMock;
 
@@ -52,23 +54,45 @@ class ControllerResult extends TestCase {
      */
     public function setUp(): void
     {
-        $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class);
-        $this->storeManagerMock = $this->getMockBuilder(StoreManager::class);
-        $this->imageHelperMock = $this->getMockBuilder(Image::class);
-        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class);
-        $this->searchFilterMock = $this->getMockBuilder(FilterBuilder::class);
-        $this->filterGroupMock = $this->getMockBuilder(FilterGroupBuilder::class);
-        $this->stockInfoMock = $this->getMockBuilder(GetSalableQuantityDataBySku::class);
-        $this->requestMock = $this->getMockBuilder(RequestHttp::class);
-        $this->responseMock = $this->createMock(ResponseHttp::class);
+        $this->productRepositoryMock = $this->getMockBuilder(ProductRepositoryInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->storeManagerMock = $this->getMockBuilder(StoreManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->imageHelperMock = $this->getMockBuilder(Image::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->searchCriteriaBuilderMock = $this->getMockBuilder(SearchCriteriaBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->searchFilterMock = $this->getMockBuilder(FilterBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->filterGroupMock = $this->getMockBuilder(FilterGroupBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->sortOrderMock = $this->getMockBuilder(SortOrderBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->stockInfoMock = $this->getMockBuilder(GetSalableQuantityDataBySku::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->requestMock = $this->getMockBuilder(RequestHttp::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->responseMock = $this->getMockBuilder(ResponseHttp::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->controller = new ControllerResult(
+        $this->controller = new Result(
             $this->productRepositoryMock,
             $this->storeManagerMock,
             $this->imageHelperMock,
             $this->searchCriteriaBuilderMock,
             $this->searchFilterMock,
             $this->filterGroupMock,
+            $this->sortOrderMock,
             $this->stockInfoMock,
             $this->requestMock,
             $this->responseMock
@@ -77,56 +101,60 @@ class ControllerResult extends TestCase {
 
     public function testCheckInvalidWithNullMin()
     {
-        $result= $this->controller->checkInvalid(null,null);
-        $message = __('A minimum price is required');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected min error");
+        $result = $this->controller->checkInvalid(null,null);
+        $message = 'A minimum price is required';
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected min error");
     }
 
     public function testCheckInvalidWithNullMax()
     {
         $result= $this->controller->checkInvalid(null,null);
-        $message = __('A maximum price is required');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected max error");
+        $message = 'A maximum price is required';
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected max error");
     }
 
     public function testCheckInvalidWithMinAsString()
     {
         $result= $this->controller->checkInvalid('test',30);
-        $message = __('Only numbers are accepted');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected NaN error");
+        $message = 'Only numbers are accepted';
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected NaN error");
     }
 
     public function testCheckInvalidWithMaxAsString()
     {
         $result= $this->controller->checkInvalid(30,'test');
-        $message = __('Only numbers are accepted');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected NaN error");
+        $message = 'Only numbers are accepted';
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected NaN error");
     }
 
     public function testCheckInvalidWithMinAsNegativeNumber()
     {
         $result= $this->controller->checkInvalid(-30,40);
-        $message = __('Only numbers are accepted');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected NaN error");
+        $message = 'Only positive numbers are accepted';
+        $this->assertIsArray($result, 'checkInvalid returns an array of errors');
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected NaN error");
     }
 
     public function testCheckInvalidWithMinGreaterThanMax()
     {
         $result= $this->controller->checkInvalid(40,30);
-        $message = __('Minimum price cannot exceed maximum price');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected minimum shouldn't be greater than maximum price error");
+        $message = 'Minimum price cannot exceed maximum price';
+        $this->assertIsArray($result, 'checkInvalid returns an array of errors');
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected minimum shouldn't be greater than maximum price error");
     }
 
     public function testCheckInvalidWithMinIsntLessThanFiveTimesMax()
     {
         $result= $this->controller->checkInvalid(5,30);
-        $message = __('Maximum price cannot exceed five times the minimum price');
-        $this->assertContains($message, $result, "checkInvalid did not return the expected min over 5 times higher than max error");
+        $message = 'Maximum price cannot exceed five times the minimum price';
+        $this->assertIsArray($result, 'checkInvalid returns an array of errors');
+        $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected min over 5 times higher than max error");
     }
 
     public function testCheckInvalidWithValidInput()
     {
         $result = $this->controller->checkInvalid(5,10);
-        $this->assertEquals([], $result, "checkInvalid returned errors on valid input");
+        $this->assertIsArray($result, 'checkInvalid returns an array of errors');
+        $this->assertEquals([], $result, "checkInvalid returned empty array on valid output");
     }
 }
