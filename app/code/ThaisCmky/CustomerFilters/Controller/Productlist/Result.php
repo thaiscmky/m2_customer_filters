@@ -29,6 +29,7 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\Search\FilterGroupBuilder;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\InventorySalesAdminUi\Model\GetSalableQuantityDataBySku;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\Request\Http as RequestHttp;
 use Magento\Framework\App\Response\Http as ResponseHttp;
 
@@ -41,6 +42,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
     protected $searchCriteriaBuilder;
     protected $searchFilter;
     protected $filterGroup;
+    protected $sortOrder;
     protected $request;
     protected $response;
 
@@ -62,6 +64,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         SearchCriteriaBuilder $searchCriteriaBuilder,
         FilterBuilder $searchFilter,
         FilterGroupBuilder $filterGroup,
+        SortOrderBuilder $sortOrderBuilder,
         GetSalableQuantityDataBySku $stockInfo,
         RequestHttp $request,
         ResponseHttp $response
@@ -70,6 +73,7 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->searchFilter = $searchFilter;
         $this->filterGroup = $filterGroup;
+        $this->sortOrder = $sortOrderBuilder;
         $this->productRepository = $productRepository;
         $this->imageHelper = $imageHelper;
         $this->storeManager = $storeManager;
@@ -83,19 +87,20 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         $offset = $this->request->get('offset');
         $minPrice = $this->request->get('minPrice');
         $maxPrice = $this->request->get('maxPrice');
+        $sort = $this->request->get('sortOrder') ?? 'ASC';
         if(!empty($error = $this->checkInvalid($minPrice, $maxPrice))) {
             return $this->response->setStatusCode(400)->representJson(
                 json_encode([
-                    'error' => implode(', ', $error)
+                    'errors' => $error
                 ])
             );
         }
 
         $result = $this->productRepository->getList($this->setSearchCriteria(
-            [$minPrice, $maxPrice]
-            , 10
-            , $offset
-            , $this->request->get('offset')
+            [$minPrice, $maxPrice],
+            10,
+            $this->request->get('offset'),
+            $sort
         ));
         $products =  $result->getItems();
 
@@ -125,17 +130,19 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         return array_reduce($this->stockInfo->execute($product->getSku()), fn($qty, $stock) => $qty + $stock['qty'], 0);
     }
 
-    protected function setPriceRange($min, $max)
+    protected function setPriceRange($min, $max, $sort = 'ASC')
     {
+        $sortOrder = $this->sortOrder->setField('price')->setDirection($sort)->create();
         $this->searchCriteriaBuilder
             ->addFilter(ProductInterface::PRICE, $max, 'lteq')
             ->addFilter(ProductInterface::PRICE, $min, 'gteq')
-            ->addFilter(ProductInterface::TYPE_ID, ['configurable', 'grouped'], 'nin');
+            ->addFilter(ProductInterface::TYPE_ID, ['configurable', 'grouped'], 'nin')
+            ->setSortOrders([$sortOrder]);
     }
 
-    protected function setSearchCriteria($range, $limit, $offset)
+    protected function setSearchCriteria($range, $limit, $offset, $sort = 'ASC')
     {
-        $this->setPriceRange($range[0], $range[1]);
+        $this->setPriceRange($range[0], $range[1], $sort);
         return $this->searchCriteriaBuilder
             ->setPageSize($limit)
             ->setCurrentPage(intval($offset) == 0 ? 0 : $offset + 1)
@@ -145,11 +152,11 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
     public function checkInvalid($min, $max) {
         $err = [];
         if(empty($min))
-            $err[] = __('A minimum price is required');
+            return [__('A minimum price is required')];
         if(empty($max))
-            $err[] = __('A maximum price is required');
+            return [__('A maximum price is required')];
         if(!is_numeric($max) || !is_numeric($min))
-            $err[] = __('Only numbers are accepted');
+            return [__('Only numbers are accepted')];
         if($min < 0 || $max < 0)
             $err[] = __('Only positive numbers are accepted');
         if( $min > $max )
@@ -157,11 +164,6 @@ class Result implements HttpGetActionInterface, HttpPostActionInterface
         if( $max > ($min > 0 ? $min : 1) * 5)
             $err[] = __('Maximum price cannot exceed five times the minimum price');
         return $err;
-    }
-
-    protected function setSortOrder()
-    {
-        //TODO order by price asc or desc
     }
 
 }
