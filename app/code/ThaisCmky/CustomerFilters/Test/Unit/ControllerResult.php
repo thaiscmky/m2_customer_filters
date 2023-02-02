@@ -108,7 +108,7 @@ class ControllerResult extends TestCase {
 
     public function testCheckInvalidWithNullMax()
     {
-        $result= $this->controller->checkInvalid(null,null);
+        $result= $this->controller->checkInvalid(3,null);
         $message = 'A maximum price is required';
         $this->assertContains($message, array_map(fn($err) => $err->render(), $result), "checkInvalid did not return the expected max error");
     }
