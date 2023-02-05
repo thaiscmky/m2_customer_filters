@@ -1,6 +1,7 @@
 # My Account Filters (m2_customer_filters)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![PHP](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
+![JavaScript](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E)
+![Magento](https://img.shields.io/badge/Magento-EE672F.svg?style=for-the-badge&logo=Magento&logoColor=white)
 ## Description
 Add a filters for your loyal customers to browse your catalog within their _My Account_ section. 
 Currently, this module allows for filtering by product price based on a minimum and maximum price.
