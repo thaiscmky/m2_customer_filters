@@ -28,6 +28,8 @@ To install this module in your Magento 2.4.5+ instance, simply clone, or downloa
 
 ## Usage
 
+The long-term goal of this Magento module is to provide customers with the ability of searching the catalog and past customer orders based on purchase history, with a number of assistive filters.
+
 Currently, customers can search for catalog products based on a minimum price and five times the minimum price entered as a min-max range. The search includes validation to ensure customers are following these rules, and it does not accept negative pricing.
 Customers can also choose to sort the search by ascending price (default, lowest to highest), or by descending price (highest to lowest).
 
@@ -43,6 +45,10 @@ Once the desired price range is submitted, a list of products matching the custo
 * A link to the product (opens on a new tab)
 
 ![alt Product Search results preview](assets/images/product_search_results_ss.png)
+
+## Future Development
+
+While, in its current state, the module only provides the means to search the entire catalog from a registered account, the ultimate intent of this module is to allow for enhanced search capabilities based on the customer's previous orders/purchases. Enhancements are under development and will be pushed periodically. Any usability suggestions around this goal are welcome.
 
 
 ## License
